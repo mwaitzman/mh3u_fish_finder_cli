@@ -185,6 +185,8 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
+    use crate::{normalize_row_input, get_table_results};
+
     #[test]
     fn test_normalize_row_input() {
 		let test_input = ",,,Pin Tuna\t  x2, Sleepyfish x2,   SushiFISHx3,,Humspun Conch,";
@@ -199,4 +201,29 @@ mod tests {
 			]}
 		);
     }
+
+	#[test]
+	fn input_should_be_table_1() {
+		let test_input = "popfishx4, popfishx4, sushifishx3, pintunax2, shiningstarfish";
+		let normalized_input = normalize_row_input(test_input)
+			.into_iter()
+			.map(|e| e as u32)
+			.collect();
+		assert_eq!(
+			get_table_results(&normalized_input),
+			1
+		);
+	}
+	#[test]
+	fn should_be_table_1_or_table_10() {
+		let input = "sleepyfishx2, pintuna x2, popfish x5, shining starfish x2, shining starfish";
+		assert_eq!(
+			get_table_results(&normalize_row_input(input)
+							  .into_iter()
+							  .map(|e| e as u32)
+							  .collect()
+			),
+			1 | (1 << 9)
+		);
+	}
 }
