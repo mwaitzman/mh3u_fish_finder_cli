@@ -1,29 +1,19 @@
 //#![warn(clippy::pedantic)]
 use std::{str::FromStr, fmt::Display};
 
-#[allow(non_camel_case_types)]
-type int = i32;
-#[allow(non_camel_case_types)]
-type unsigned = u32;
-#[allow(non_camel_case_types)]
-type array<t> = Vec<t>;
-#[allow(non_camel_case_types)]
-type long__long = i64;
-
-
-fn rnd(n: int) -> int {
+fn rnd(n: i32) -> i32 {
 	if n == 0 { return 176; }
 
-	let x: int = n * 16 - n * 4 - n;
-	let y: long__long = (x * 16).into();
-	let z: long__long = y * 11367737 / 4294967296;
-	let m: long__long = y - ( (y-z) / 2 + z) / 32768 * 65363;
-	(m & 0xFFFF) as int
+	let x: i32 = n * 16 - n * 4 - n;
+	let y: i64 = (x * 16).into();
+	let z: i64 = y * 11367737 / 4294967296;
+	let m: i64 = y - ( (y-z) / 2 + z) / 32768 * 65363;
+	(m & 0xFFFF) as i32
 }
 
-fn get_fish_index(roll: unsigned, fish: &array<unsigned>) -> unsigned {
-	let mut total: unsigned = fish[0];
-	let mut count: unsigned = 0;
+fn get_fish_index(roll: u32, fish: &[u32]) -> u32 {
+	let mut total: u32 = fish[0];
+	let mut count: u32 = 0;
 	while total <= roll {
 		count += 1;
 		total += fish[count as usize];
@@ -31,33 +21,33 @@ fn get_fish_index(roll: unsigned, fish: &array<unsigned>) -> unsigned {
 	count
 }
 
-fn reward_func(mut num: unsigned, rep: unsigned) -> unsigned {
+fn reward_func(mut num: u32, rep: u32) -> u32 {
 	for _ in 0..rep {
 		num = (num * 176) % 65363;
 	}
 	num
 }
 
-fn array_equals(a: &array<unsigned>, r#as: unsigned, b: &array<unsigned>, bs: unsigned, len: unsigned) -> bool {
+fn array_equals(a: &[u32], r#as: u32, b: &[u32], bs: u32, len: u32) -> bool {
 	(0..len).all(|i| a[(r#as + i) as usize] == b[(bs + i) as usize])
 }
 
-fn search_seed(seed: unsigned, fish_table: &array<unsigned>, items: &array<unsigned>) -> bool {
-	//irre: I have no idea what qwe is supposed to mean. I'm assuming AthenaADP was just being a lazy QWERTY user :|
-	let qwe: array<unsigned> = (1..14).map(|j| {
-		let roll: unsigned = reward_func(seed, j.try_into().unwrap()) % 100;
+fn search_seed(seed: u32, fish_table: &[u32], items: &Vec<u32>) -> bool {
+	//irre: I have no idea what qwe is supposed to mean. I'm assuming Athena was just being a lazy QWERTY user :|
+	let qwe: Vec<u32> = (1..14).map(|j| {
+		let roll: u32 = reward_func(seed, j.try_into().unwrap()) % 100;
 		get_fish_index(roll, fish_table)
 	}).collect();
 
-	let max_fishfinder: unsigned = (std::cmp::Ord::clamp(items.len(), 4, 7) - 4).try_into().unwrap();
-	(0..=max_fishfinder).any(|i: unsigned| {
+	let max_fishfinder: u32 = (std::cmp::Ord::clamp(items.len(), 4, 7) - 4).try_into().unwrap();
+	(0..=max_fishfinder).any(|i: u32| {
 		array_equals(&qwe, 0, items, 0, (items.len() - (i as usize)).try_into().unwrap())
 			&& array_equals(&qwe, 10, items, (items.len() - (i as usize)).try_into().unwrap(), i)
 	})
 }
 
-fn check_seed(seed: int, fish_table: &array<unsigned>, items: &array<unsigned>) -> bool {
-	let mut n: int = seed;
+fn check_seed(seed: i32, fish_table: &[u32], items: &Vec<u32>) -> bool {
+	let mut n: i32 = seed;
 	loop {
 		if search_seed(n.try_into().unwrap(), fish_table, items) { return true; };
 
@@ -67,10 +57,10 @@ fn check_seed(seed: int, fish_table: &array<unsigned>, items: &array<unsigned>) 
 	}
 }
 
-fn get_table_results(items: &array<unsigned>) -> unsigned {
+fn get_table_results(items: &Vec<u32>) -> u32 {
 
-	let table_seeds: array<int> = vec![1, 15, 5, 13, 4, 3, 9, 12, 26, 18, 163, 401, 6, 2, 489, 802, 1203];
-	let fish: array<unsigned> = vec![20, 15, 5, 5, 10, 15, 5, 10, 5, 5, 5];
+	let table_seeds: Vec<i32> = vec![1, 15, 5, 13, 4, 3, 9, 12, 26, 18, 163, 401, 6, 2, 489, 802, 1203];
+	let fish: Vec<u32> = vec![20, 15, 5, 5, 10, 15, 5, 10, 5, 5, 5];
 
 	(0..17)
 		.filter(|t| check_seed(table_seeds[*t as usize], &fish, items))
@@ -147,7 +137,7 @@ fn normalize_row_input(row: &str) -> Vec<FishRewards> {
 
 fn main() {
 	let mut line = String::new();
-	const ALL_TABLES_POSSIBLE: unsigned = u32::MAX >> (u32::BITS - 17);
+	const ALL_TABLES_POSSIBLE: u32 = u32::MAX >> (u32::BITS - 17);
 	let mut possible_tables = ALL_TABLES_POSSIBLE;
 	while 0 != std::io::stdin().read_line(&mut line).unwrap() {
 		if line == "\n" {
@@ -157,9 +147,9 @@ fn main() {
 			continue;
 		}
 
-		let my_items: array<unsigned> = normalize_row_input(&line)
+		let my_items: Vec<u32> = normalize_row_input(&line)
 			.into_iter()
-			.map(|e| e as unsigned)
+			.map(|e| e as u32)
 			.collect();
 		let packed_result = get_table_results(&my_items);
 		println!("possible tables from this row: {}",
