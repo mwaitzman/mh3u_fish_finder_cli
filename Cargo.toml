@@ -1,5 +1,5 @@
 [package]
-name = "MH3U_fish_finder"
+name = "mh3u_fish_finder"
 description = "Find your charm table in Monster Hunter 3 Ultimate using the Moga Village fishing result method popularized by mhvuze. Based on AthenaADP's MH3U-Fish-Finder program"
 version = "0.1.0"
 edition = "2021"
