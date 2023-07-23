@@ -33,7 +33,6 @@ fn array_equals(a: &[u32], r#as: u32, b: &[u32], bs: u32, len: u32) -> bool {
 }
 
 fn search_seed(seed: u32, fish_table: &[u32], items: &Vec<u32>) -> bool {
-	//irre: I have no idea what qwe is supposed to mean. I'm assuming Athena was just being a lazy QWERTY user :|
 	let qwe: Vec<u32> = (1..14).map(|j| {
 		let roll: u32 = reward_func(seed, j.try_into().unwrap()) % 100;
 		get_fish_index(roll, fish_table)

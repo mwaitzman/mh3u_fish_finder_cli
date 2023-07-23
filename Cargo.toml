@@ -1,9 +1,8 @@
 [package]
-name = "mh3u_fish_finder"
-description = "Find your charm table in Monster Hunter 3 Ultimate using the Moga Village fishing result method popularized by mhvuze. Based on AthenaADP's MH3U-Fish-Finder program"
-version = "0.1.0"
+name = "mh3u_fish_finder_cli"
+description = "Find your charm table in Monster Hunter 3 Ultimate using the Moga fishing result method popularized by MHVuze. Based on AthenaADP's well-known MH3U-Fish-Finder program. Cross-platform."
+version = "1.0.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+license = "RPL-1.5"
 
 [dependencies]
